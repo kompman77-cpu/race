@@ -12,7 +12,7 @@ const games=[['race','🏎️ Ночные гонки'],['puzzle','🧩 Втор
 let h='';
 for(const [key,title] of games){
   h+='<div class="game" id="'+key+'">'+title+'<br><small>считаю…</small></div>';
-  fetch('https://api.countapi.xyz/get/neon-games/'+key)
+  fetch('https://abacus.jasoncameron.dev/get/neon-games/'+key)
     .then(r=>r.json()).then(d=>{
       document.getElementById(key).innerHTML=title+
         '<div class="big">'+(d.value??0)+'</div><small>запусков игры</small>';
