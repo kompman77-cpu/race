@@ -9,15 +9,31 @@ small{color:#a5b4fc}
 <div id="box">Загружаю…</div>
 <script>
 const games=[['race','🏎️ Ночные гонки'],['puzzle','🧩 Вторая игра']];
+const API='https://abacus.jasoncameron.dev/get/neon-games/';
 let h='';
 for(const [key,title] of games){
   h+='<div class="game" id="'+key+'">'+title+'<br><small>считаю…</small></div>';
-  fetch('https://abacus.jasoncameron.dev/get/neon-games/'+key)
-    .then(r=>r.json()).then(d=>{
-      document.getElementById(key).innerHTML=title+
-        '<div class="big">'+(d.value??0)+'</div><small>запусков игры</small>';
-    }).catch(()=>document.getElementById(key).innerHTML=title+
-        '<div class="big">—</div><small>счётчик недоступен</small>');
+  ask(key,title,1);
 }
 document.getElementById('box').innerHTML=h;
+function show(key,title,val,note){
+  document.getElementById(key).innerHTML=title+
+    '<div class="big">'+(val??'—')+'</div><small>'+note+'</small>';
+}
+function ask(key,title,tryN){
+  fetch(API+key).then(r=>r.json()).then(d=>{
+    const v=d.value??0;
+    try{localStorage.setItem('cnt_'+key,v)}catch(e){}
+    show(key,title,v,'запусков игры');
+  }).catch(()=>{
+    let saved=null;
+    try{saved=localStorage.getItem('cnt_'+key)}catch(e){}
+    if(tryN<4){
+      show(key,title,saved,'сервис просыпается, ждём…');
+      setTimeout(()=>ask(key,title,tryN+1),15000); // ещё попытка через 15 сек
+    }else{
+      show(key,title,saved,'сервис спит. Обнови страницу через минуту');
+    }
+  });
+}
 </script></body></html>
