@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title>Статистика игр</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0b1428;color:#fff;max-width:520px;margin:40px auto;padding:0 20px;text-align:center}
+h1{color:#a5f3fc}.big{font-size:52px;font-weight:800;color:#fde047;margin:10px 0}
+.game{background:#142244;border:1px solid #243657;border-radius:14px;padding:20px;margin:16px 0}
+small{color:#a5b4fc}
+</style></head><body>
+<h1>📊 Мои игры</h1>
+<div id="box">Загружаю…</div>
+<script>
+const games=[['race','🏎️ Ночные гонки'],['puzzle','🧩 Вторая игра']];
+let h='';
+for(const [key,title] of games){
+  h+='<div class="game" id="'+key+'">'+title+'<br><small>считаю…</small></div>';
+  fetch('https://api.countapi.xyz/get/neon-games/'+key)
+    .then(r=>r.json()).then(d=>{
+      document.getElementById(key).innerHTML=title+
+        '<div class="big">'+(d.value??0)+'</div><small>запусков игры</small>';
+    }).catch(()=>document.getElementById(key).innerHTML=title+
+        '<div class="big">—</div><small>счётчик недоступен</small>');
+}
+document.getElementById('box').innerHTML=h;
+</script></body></html>
